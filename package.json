@@ -1,0 +1,23 @@
+{
+	"name": "logyCallsToZoho",
+	"description": "A node app that will query Log My Calls for new call records and then enter them as new contacts in Zoho or if the phone number matches an existing contact it will enter a new event on that contact.",
+	"version": "0.0.1",
+	"main": "./launcher.js",
+	"homepage": "http://www.github.com/dtex/timecop",
+	"author": {
+		"name": "dtex",
+		"email": "donovan@donovan.bz"  
+	},
+	"keywords": [
+		"zoho",
+		"logmycalls"
+	],
+	"dependencies": {
+		"neuron": "0.4.5",
+		"utile": "0.1.1",
+		"nconf": "0.6.0",
+		"nodemailer": "0.3.20",
+		"cron": "0.3.3",
+		"plates": "0.4.6"
+	}
+}
