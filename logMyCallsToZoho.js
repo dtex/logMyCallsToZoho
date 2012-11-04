@@ -7,6 +7,8 @@ var https = require('https'),
 	plates = require("plates"), // Templating for emails https://github.com/flatiron/plates
 	logMyCallsToZoho = {};
 	
+process.title = 'logMyCallsToZoho';
+	
 //
 // ### Version 0.0.1
 //
