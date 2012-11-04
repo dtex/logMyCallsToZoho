@@ -3,7 +3,7 @@ logMyCallsToZoho.js
 
 A node app that will query Log My Calls for new call records and then enter them as new contacts in Zoho or if the phone number matches an existing contact it will enter a new event on that contact.
 
-Documented [source code](http://www.github.com/dtex/logMyCallsToZoho/docs/logMyCallsToZoho.html)
+Documented [source code](http://dtex.github.com/logMyCallsToZoho/docs/logMyCallsToZoho.html)
 
 I have only tested in node 0.8.6
 
