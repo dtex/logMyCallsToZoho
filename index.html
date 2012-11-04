@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Logmycallstozoho : Looks for new calls in Log My Calls and enters them as new contacts or events on matched contacts at Zoho" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Logmycallstozoho</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/dtex/logMyCallsToZoho">View on GitHub</a>
+
+          <h1 id="project_title">Logmycallstozoho</h1>
+          <h2 id="project_tagline">Looks for new calls in Log My Calls and enters them as new contacts or events on matched contacts at Zoho</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/dtex/logMyCallsToZoho/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/dtex/logMyCallsToZoho/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>logMyCallsToZoho.js</h1>
+
+<p>A node app that will query Log My Calls for new call records and then enter them as new contacts in Zoho or if the phone number matches an existing contact it will enter a new event on that contact.</p>
+
+<p>Documented <a href="http://www.github.com/dtex/logMyCallsToZoho/docs/logMyCallsToZoho.html">source code</a></p>
+
+<p>I have only tested in node 0.8.6</p>
+
+<h2>Getting Started</h2>
+
+<p>You'll need node.js of course. Get it from <a href="nodejs.com">http://nodejs.org</a>.</p>
+
+<p>Grab the logMyCallsToZoho files from the <a href="downloads">https://github.com/dtex/logMyCallsToZoho/downloads</a> and unzip to the folder where you would like for logMyCallsToZoho to reside.</p>
+
+<p>From the command line run "npm install" inside the logMyCallsToZoho folder.</p>
+
+<h2>Configure your install</h2>
+
+<p>Rename sample-config.json to config.json and edit as described below.</p>
+
+<h3>LogMyCalls API Configuration</h3>
+
+<pre><code>"API": YourAPIKey,
+"Secret": YourSecret,
+"lastCall": 0
+</code></pre>
+
+<h3>Zoho API Configuration</h3>
+
+<h3>SMTP Configuration</h3>
+
+<p>Enter your SMTP server details</p>
+
+<pre><code>"smtp": {
+    "host": "smtp.sendgrid.net",
+    "port": "587",
+    "user": "********",
+    "pass": "********"
+},
+</code></pre>
+
+<h3>Job Scheduling</h3>
+
+<p>jobs is an array of job objects. Each job object consists of:
+ schedule: a <a href="http://www.nncron.ru/help/EN/working/cron-format.htm">cron formatted</a> string,
+ type: Currently the only valid value is getNewCalls. We may add more types later
+     "jobs": [
+        {
+            "schedule": "00 [00,15,30,45] * * * *",
+            "type": "getNewCalls"
+        }
+    ],</p>
+
+<p>This example equates to:</p>
+
+<ul>
+<li>Every 15 minutes run getNewCalls</li>
+</ul><p>Be sure to check the system time where this will be running. I once spent more time than I care to admit debugging a job scheduler when it turned out that the system time was just wrong.</p>
+
+<h3>Email Templates</h3>
+
+<p>templates is an object that contains all the templates used (currently only the newCallsNotification). This is the template for the email that will be sent to users. Feel free to make it as fancy as you like.</p>
+
+<pre><code>"templates": {
+    "newCallsNotification": "&lt;p&gt;&lt;b&gt;Hi &lt;span id=\"name\"&gt;&lt;/span&gt;, you have had &lt;span id=\"callCount\"&gt;&lt;/span&gt; new calls logged to Zoho&lt;/b&gt;&lt;/p&gt;"
+}
+</code></pre>
+
+<p>This span will be populated with the recipient's name.</p>
+
+<pre><code>&lt;span id=\"name\"&gt;&lt;/span&gt; 
+</code></pre>
+
+<p>This span will contain the number of new calls processed.</p>
+
+<pre><code>&lt;span id=\"callCount\"&gt;&lt;/span&gt;
+</code></pre>
+
+<h2>Running the app</h2>
+
+<p>From the command line run "node logMyCallsToZoho". logMyCallsToZoho will run until it is stopped or the current terminal session has ended.</p>
+
+<p>Running "node logMyCallsToZoho --mode test" will do the same, but will trigger an immediate getNewCalls check, regardless of the schedule.</p>
+
+<p>Running "node launcher" will run logMyCallsToZoho as a service so that it stays running even after the current terminal session has ended. It will NOT restart logMyCallsToZoho if logMyCallsToZoho or the server crashes for some reason.</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Logmycallstozoho maintained by <a href="https://github.com/dtex">dtex</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
