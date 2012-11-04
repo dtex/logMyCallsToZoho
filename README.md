@@ -19,15 +19,13 @@ From the command line run "npm install" inside the logMyCallsToZoho folder.
 
 Rename sample-config.json to config.json and edit as described below.
 
+### LogMyCalls API Configuration ###
+	
+	"API": YourAPIKey,
+	"Secret": YourSecret,
+	"lastCall": 0
+
 ### Zoho API Configuration ###
-
-Enter your xxx apiToken here
-
-    "apiToken": "*********************",
-
-The email address from Traffic that is associated with the token
-
-    "email": "apiuser@yourcommpany.com",
 
 ### SMTP Configuration ###
 
@@ -47,7 +45,7 @@ jobs is an array of job objects. Each job object consists of:
  type: Currently the only valid value is getNewCalls. We may add more types later
      "jobs": [
         {
-            "schedule": "00 [00,15,30,45] * * * 1-7",
+            "schedule": "00 [00,15,30,45] * * * *",
             "type": "getNewCalls"
         }
     ],
@@ -55,11 +53,11 @@ jobs is an array of job objects. Each job object consists of:
 This example equates to:
 * Every 15 minutes run getNewCalls
 
-Be sure to check the system time where timecop will be running. I once spent more time than I care to admit debugging a job scheduler when it turned out that the system time was just wrong.
+Be sure to check the system time where this will be running. I once spent more time than I care to admit debugging a job scheduler when it turned out that the system time was just wrong.
 	
 ### Email Templates ###
 
-templates is an object that contains all the templates used (currently only hours for jobs.type checkHours). This is the template for the email that will be sent to users. Feel free to make it as fancy as you like.
+templates is an object that contains all the templates used (currently only the newCallsNotification). This is the template for the email that will be sent to users. Feel free to make it as fancy as you like.
 
     "templates": {
         "newCallsNotification": "<p><b>Hi <span id=\"name\"></span>, you have had <span id=\"callCount\"></span> new calls logged to Zoho</b></p>"
