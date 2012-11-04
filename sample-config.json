@@ -1,3 +1,28 @@
 {
-	
+	"zohoConfig": {
+		"apiToken": "***",
+		"email": "***"
+	},
+	"logMyCallsConfig": {
+		"API": "***",
+		"Secret": "***",
+		"lastCall": 0
+	},
+	"smtp": {
+		"host": "smtp.sendgrid.net",
+		"port": "587",
+		"user": "brandextract",
+		"pass": "brand3xtract",
+		"from": "*** ✔ <user@company.com>",
+		"subject": "Subject"
+	},
+	"jobs": [
+		{
+			"schedule": "00 [00,15,30,45] * * * *",
+			"type": "getNewCalls"
+		}
+	],
+	"templates": {
+        "newCallsNotification": "<p><b>Hi <span id=\"name\"></span>, you have had <span id=\"callCount\"></span> new calls logged to Zoho</b></p>"
+    }
 }
