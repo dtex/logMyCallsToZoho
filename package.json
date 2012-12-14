@@ -18,6 +18,7 @@
 		"nconf": "0.6.0",
 		"nodemailer": "0.3.20",
 		"cron": "0.3.3",
-		"plates": "0.4.6"
+		"plates": "0.4.6",
+		"underscore": "1.4.3"
 	}
 }
