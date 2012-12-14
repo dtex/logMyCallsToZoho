@@ -5,6 +5,7 @@ var https = require('https'),
 	nodemailer = require("nodemailer"), // Used to send email https://github.com/andris9/Nodemailer
 	cronJob = require("cron").CronJob, // For scheduling tasks https://github.com/ncb000gt/node-cron
 	plates = require("plates"), // Templating for emails https://github.com/flatiron/plates
+	_ = require("underscore")._, // Utility library
 	logMyCallsToZoho = {};
 	
 process.title = 'logMyCallsToZoho';
@@ -49,12 +50,15 @@ manager.addJob('getNewCalls', {
 				
 				res.on('end', function () {
 					
-					console.log(body);
 					// parse the JSON response
+					var calls = JSON.parse(body);
 					
 					// For each call (use utile's each)
-					
-					// enqueue job to check to see if this number is recognized by zoho
+					utile.each(calls.results, function( call, idx, obj) {
+						// enqueue job to check to see if this number is recognized by zoho
+						//manager.enqueue('checkNumber', call );
+						console.log(call.caller_id);
+					});
 					
 					// enqueue job to send notification via email
 					
@@ -73,35 +77,146 @@ manager.addJob('getNewCalls', {
 	}
 });
 
+//
+// ### See if the number is recognized by Zoho
+//
+manager.addJob('checkNumber', {
 
+	work: function ( callObject ) {
+		
+		var self = this,
+			number = callObject.caller_id.substring(0,3)+"-"+
+					 callObject.caller_id.substring(3,6)+"-"+
+					 callObject.caller_id.substring(6,10);
+			
+		var req = https.request( { 
+			host: "crm.zoho.com", 
+			headers: {
+				"Accept": "application/json"
+			}, 
+			path: "/crm/private/json/Contacts/getSearchRecords?version=2&authtoken=" + nconf.get("zohoConfig:apiToken") + "&scope=crmapi" +
+			"&selectColumns=Contacts(contactid,Email)&searchColumn=email&searchCondition=(Phone|contains|*"+number+"*)",
+			port: 443,
+			method: 'GET' },
+		
+			function(res) { 
+				var body = '';
+				
+				res.on('data', function (chunk) {
+					body+=chunk;
+				});
+				
+				res.on('end', function () {
+					
+					var matches = JSON.parse(body);
+					if(_.has(matches.response, 'result')) {
+						console.log('Hit on '+number);
+						manager.enqueue('addEventToContact', callObject, matches.response.result.Contacts.row );
+					} else {
+						console.log('No hit on '+number);
+						manager.enqueue('createNewContact', callObject );
+					}
+					
+					self.finished = true;
+				});
 
-
-// Define job to see if this number is recognized by zoho
-
-	// if this number is recognized then enqueue job to add a call event to the lead or contact (not sure which yet)
+			}
+		);
+		
+		req.end();
+		
+		req.on('error', function(e) {
+			console.error(e)
+		})
+	}
 	
-	// else enqueue job to add a new lead or contact and add call(not sure which yet)
+});
+
+//
+// ## Define job to add a call event to the lead or contact
+//
+manager.addJob('addEventToContact', {
+
+	work: function ( callObject, contactObject ) {
+		
+		var self = this;
+			
+		var req = https.request( { 
+			host: "crm.zoho.com", 
+			headers: {
+				"Accept": "application/json"
+			}, 
+			path: "/crm/private/json/Contacts/getSearchRecords?version=2&authtoken=" + nconf.get("zohoConfig:apiToken") + "&scope=crmapi" +
+			"&selectColumns=Contacts(contactid,Email)&searchColumn=email&searchCondition=(Phone|contains|*1234567890*)",
+			port: 443,
+			method: 'GET' },
+		
+			function(res) { 
+				var body = '';
+				
+				res.on('data', function (chunk) {
+					body+=chunk;
+				});
+				
+				res.on('end', function () {
+					
+					self.finished = true;
+				});
+
+			}
+		);
+		
+		req.end();
+		
+		req.on('error', function(e) {
+			console.error(e)
+		})
+	}
 	
+});
 
+//
+// ## Define job to create a new contact
+//
+manager.addJob('createNewContact', {
 
+	work: function ( callObject, contactObject ) {
+		
+		var self = this;
+			
+		var req = https.request( { 
+			host: "crm.zoho.com", 
+			headers: {
+				"Accept": "application/json"
+			}, 
+			path: "/crm/private/json/Contacts/getSearchRecords?version=2&authtoken=" + nconf.get("zohoConfig:apiToken") + "&scope=crmapi" +
+			"&selectColumns=Contacts(contactid,Email)&searchColumn=email&searchCondition=(Phone|contains|*1234567*)",
+			port: 443,
+			method: 'GET' },
+		
+			function(res) { 
+				var body = '';
+				
+				res.on('data', function (chunk) {
+					body+=chunk;
+				});
+				
+				res.on('end', function () {
+					manager.enqueue('addEventToContact', callObject, contactObject)
+					self.finished = true;
+				});
 
-// Define job to add a call event to the lead or contact
-
-	// Add call event
+			}
+		);
+		
+		req.end();
+		
+		req.on('error', function(e) {
+			console.error(e)
+		})
+	}
 	
-	// enqueue job to update last call in config.json
-
-
-
-
-// Define job to add lead or contact and call event
-
-	// Add lead or content
-	
-	// Add call event
-	
-	// enqueue job to update last call in config.json
-	
+});
 
 
 // Define job to send notification via email
